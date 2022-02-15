@@ -90,6 +90,38 @@
     <div class="onethird">
         <h3>List and Slider</h3>
         <form method="post">
+            <label>
+                Select favourite Ride<br/>
+                <select asp-for="MyRide">
+                    @* create a prompt line for the ddl*@
+                    <option value="0">select a ride ...</option>
+                    @* the ddl has a dynamic collection from the database*@
+                    @foreach(var item in Model.Rides)
+                    {
+                        <option value="@item.ValueId">@item.DisplayText</option>
+                    }
+                </select>
+            </label>
+            <br/>
+            <label>
+                Select favourite Vacation spot
+                <input type="text" asp-for="VacationSpot"
+                    list = "VacationChoices" />
+                <datalist id="VacationChoices">
+                    @* the ddl has a dynamic collection from the database*@
+                    @foreach(var item in Model.VacationSpots)
+                    {
+                        <option value="@item" />
+                        @*<option value="@item">@item</option>*@
+                    }
+                </datalist>
+            </label>
+            <br/>
+            <label>
+                Review of controls (bad < - > good)
+                <input type="range" min="0" max="10" steps="1" value="5"
+                    asp-for="ReviewRating" checked="@Model.ReviewRating" />
+            </label>
             <br/>
             <button type="submit" value="listrangebox" id="theListSliderButton"
               name="theListSliderButton" asp-page-handler="ListSlider">
