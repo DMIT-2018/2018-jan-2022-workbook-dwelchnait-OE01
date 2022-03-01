@@ -51,11 +51,46 @@
                     }
                 </select>
             </label>
+            <br/>
             <button type="submit" >Find Albums</button>
         </form>
     </div>
     <div class="onehalf">
+        @*do not put out anything unless there is something to show*@
+        @if(Model.AlbumsByGenre != null)
+        {
+            if(Model.AlbumsByGenre.Count() == 0)
+            {
+                <p style="color:blue;font-weight:bold;">This genre has no tracks on any album on file </p>
+            }
+            else
+            {
+                <table border="1">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Year</th>
+                            <th>Label</th>
+                            <th>Artist</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach(var item in Model.AlbumsByGenre)
+                        {
+                            <tr>
+                                <td>@item.Title</td>
+                                <td>@item.ReleaseYear</td>
+                                <td>@item.ReleaseLabel</td>
+                                <td>@item.ArtistName</td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
 
+                    </tfoot>
+                </table>
+            }
+        }
     </div>
 
 </section>

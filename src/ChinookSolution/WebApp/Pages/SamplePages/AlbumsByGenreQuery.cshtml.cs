@@ -44,6 +44,9 @@ namespace WebApp.Pages.SamplePages
         [BindProperty(SupportsGet = true)]
         public int? GenreId { get; set; }
 
+        [BindProperty]
+        public List<AlbumsListBy> AlbumsByGenre { get; set; }
+
         public void OnGet()
         {
             //consume a service GetAllGenres()
@@ -51,6 +54,15 @@ namespace WebApp.Pages.SamplePages
             //the presentation layer would like to order the list
             //use the .Sort() method of the List<T> class
             GenreList.Sort((x,y) => x.DisplayText.CompareTo(y.DisplayText));
+
+            //remember that this method executes as the page FIRST comes up BEFORE
+            //      anything has happened on the page (including the FIRST display)
+            //any code in this method MUST handle the possibility of missing data for query arguments
+
+            if (GenreId.HasValue && GenreId > 0)
+            {
+                AlbumsByGenre = _albumServices.AlbumsByGenre((int)GenreId);
+            }
         }
 
         public IActionResult OnPost() //result of pushing a button on a form with method="post"
