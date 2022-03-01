@@ -41,8 +41,8 @@ namespace WebApp.Pages.SamplePages
         [BindProperty]
         public List<SelectionList> GenreList { get; set; }
 
-        [BindProperty]
-        public int GenreId { get; set; }
+        [BindProperty(SupportsGet = true)]
+        public int? GenreId { get; set; }
 
         public void OnGet()
         {
@@ -63,7 +63,7 @@ namespace WebApp.Pages.SamplePages
             {
                 FeedBack = $"You selected the genre id {GenreId}";
             }
-            return RedirectToPage(); //cause a Get request to be issued; cause OnGet to execute
+            return RedirectToPage(new {GenreId = GenreId }); //cause a Get request to be issued; cause OnGet to execute
         }
     }
 }
