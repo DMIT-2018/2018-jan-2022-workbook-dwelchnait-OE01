@@ -111,5 +111,10 @@ namespace WebApp.Pages.SamplePages
             }
             return RedirectToPage(new {GenreId = GenreId }); //cause a Get request to be issued; cause OnGet to execute
         }
+
+        public IActionResult OnPostNew()
+        {
+            return RedirectToPage("/SamplePages/CRUDAlbum");
+        }
     }
 }

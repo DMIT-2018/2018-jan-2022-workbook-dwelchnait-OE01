@@ -1,0 +1,88 @@
+﻿@page "{albumid?}"
+@model WebApp.Pages.SamplePages.CRUDAlbumModel
+@{
+    ViewData["Title"] = "CRUD Album";
+}
+
+@* this section is found on the _Layout at the bottom
+       it is optional
+       it allows us to add specific items to a specific page
+       double check the script references in the file in your wwwroot.lib jquery folders*@
+@section Scripts{ 
+    <partial name="_ValidationScriptsPartial" />
+}
+
+<h1>Maintain Album</h1>
+
+<p style="font-weight:bold; color:forestgreen;">@Model.FeedBackMessage</p>
+<p style="font-weight:bold; color:firebrick;">@Model.ErrorMessage</p>
+
+<form method="post">
+    <label>
+        Album:
+        <input type="text" asp-for="Album.AlbumId" readonly data-val="false" />
+        <span asp-validation-for="Album.AlbumId"></span>
+    </label>
+    <label>
+        Title:
+        <input type="text" asp-for="Album.Title" placeholder="enter the album title" />
+        <span asp-validation-for="Album.Title"></span>
+    </label>
+    <label>
+        Artist:
+        <select asp-for="Album.ArtistId">
+            @foreach (var item in Model.Artists)
+            {
+                //for New album, you have yet of obtain an instance of Album
+                //   therefore you CANNOT test to see if the ValueField == the Album instance
+                //Soultion: Have a test (first in conditions) that ensures you have
+                //   the ablumid (.HasValue) BEFORE you attempt to USE the supposed Album
+                //   instance
+                if (Model.albumid.HasValue && item.ValueId == Model.Album.ArtistId)
+                {
+                    <option value="@item.ValueId" selected>@item.DisplayText</option>
+                }
+                else
+                {
+                    <option value="@item.ValueId">@item.DisplayText</option>
+                }
+            }
+        </select>
+        <span asp-validation-for="Album.ArtistId"></span>
+    </label>
+    <label>
+        Year:
+        <input type="number" asp-for="Album.ReleaseYear" placeholder="enter the album release year" />
+        <span asp-validation-for="Album.ReleaseYear"></span>
+    </label>
+    <label>
+        Label:
+        <input type="text" asp-for="Album.ReleaseLabel" placeholder="enter the album release label" />
+        <span asp-validation-for="Album.ReleaseLabel"></span>
+    </label>
+    @if (Model.Album != null)
+    {
+        <button type="submit" asp-page-handler="New" disabled>Save New</button>
+        <button type="submit" asp-page-handler="Update">Update</button>
+        @* add Javascript prompt for delete confirmation using the onclick *@
+        <button type="submit" asp-page-handler="Delete" formnovalidate
+                onclick="return confirm('Are you sure you wish to delete the album?')">
+            Delete
+        </button>
+        <button type="submit" asp-page-handler="Clear" formnovalidate>Clear</button>
+        <button type="submit" asp-page-handler="Search" formnovalidate>Search</button>
+    }
+    else
+    {
+    <button type="submit" asp-page-handler="New">Save New</button>
+    <button type="submit" asp-page-handler="Update" disabled>Update</button>
+    @* add Javascript prompt for delete confirmation using the onclick *@
+    <button type="submit" asp-page-handler="Delete" formnovalidate disabled
+            onclick="return confirm('Are you sure you wish to delete the album?')">
+        Delete
+    </button>
+    <button type="submit" asp-page-handler="Clear" formnovalidate>Clear</button>
+    <button type="submit" asp-page-handler="Search" formnovalidate>Search</button>
+    }
+
+</form>
