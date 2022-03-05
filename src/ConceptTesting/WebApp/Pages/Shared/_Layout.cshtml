@@ -1,0 +1,71 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - WebApp</title>
+    
+    @*    link to holiday css*@ 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/holiday.css@0.9.8" />
+    @*  link to get icons for buttons 
+
+    to obtain your icons
+    1) https://icons8.com/line-awesome
+    2) enter the icon's generic name in the search area
+    3) click on the icon you are interested in
+    4) copy th <i .....></i> html line containing the class
+    5) pass it to your button
+    *@
+    <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
+
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/WebApp.styles.css" asp-append-version="true" />
+    @RenderSection("headsection", required: false)
+</head>
+<body>
+    <header>
+        <nav>
+                <ul>
+                    <li>
+                        <a asp-area="" asp-page="/Index">
+                            <img src=~/img/ChinookMusicMenuLogo.jpg
+                             alt="logo" title="Home" /></a>
+                    </li>
+                    <li>
+                        <a asp-area="" asp-page="/Index">Home</a>
+                    </li>
+                    <li>
+                        <span>Samples</span>
+                        <ul>
+                            <li>
+                                <a asp-area="" asp-page="/FilterSearch">Filter Searches</a>
+                            </li>
+
+                        </ul>
+                    </li>
+                    <li>
+                        <a asp-area="" asp-page="/Privacy">Privacy</a>
+                    </li>
+                    <partial name="_LoginPartial" />
+                </ul>
+                    
+                
+        </nav>
+    </header>
+    
+    <main role="main" class="pb-3">
+        @RenderBody()
+    </main>
+    
+
+    <footer>
+        <div>
+            &copy; 2022 - Chinook Test App - <a asp-area="" asp-page="/Privacy">Privacy</a>
+        </div>
+    </footer>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,156 @@
+﻿@page "{MediaTypeId:int?}/{GenreId:int?}/{AlbumId:int?}"
+@model WebApp.Pages.FilterSearchModel
+@{
+    ViewData["Title"] = "Filter Searching";
+}
+@section headsection{
+    <link rel="stylesheet" href="~/css/FilterSearch.css" asp-append-version="true" />
+}
+
+<h1>Filter Searches</h1>
+<blockquote>
+    On this page we will investigate
+    <ul>
+        <li>custom css layout</li>
+        <li>multiple routing parameters</li>
+        <li>simulating auto postback from asp.net web pages</li>
+        <li>paginator on table</li>
+        <li>radiobuttons, dropdownlist (select), table generation</li>
+    </ul>
+</blockquote>
+
+
+@* NOTE: These forms are for the automatic post-back of the control (radio button 
+         dropdownlist, button) selections for each step of the filter search process *@
+<form method="post" id="redirectMediaType" asp-page-handler="MediaType"></form>
+<form method="post" id="redirectGenre" asp-page-handler="Genre"></form>
+
+<section class="setflex">
+    <div class="twenty">
+        <h3>
+            Select a MediaType
+        </h3>
+        <table>
+            <tbody>
+                @foreach (var item in Model.MediaList)
+                {
+                    <tr>
+                        <td>
+                            @* the helper tag asp-for="propertyname" is replaced with the named pair
+                                name/value (name="propertyname" and value="the value yo widh to return")
+                                WARNING: DO NOT use both asp-for and name paris together!,
+                                            it is one or the other!
+                            *@
+                            <input type="radio" name="MediaTypeId" 
+                                    value="@item.DisplayValue"
+                                    checked="@(item.DisplayValue == Model.MediaTypeId.ToString())"
+                                    onclick="this.form.submit();"
+                                    form="redirectMediaType" />
+                            @item.DisplayText
+                           
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="twenty">
+        @if (Model.MediaTypeId.HasValue)
+        {
+            <h3>
+                Select a Genre
+            </h3>
+            <select name="GenreId"
+                onchange="this.form.submit();"
+                form="redirectGenre">
+                @foreach (var item in Model.GenreList)
+                {
+                    <option value="@item.DisplayValue"
+                      selected="@(item.DisplayValue == Model.GenreId.ToString())">@item.DisplayText</option>   
+                }
+            </select>
+        }
+    </div>
+        <div class="thirty">
+        @if (Model.GenreId.HasValue)
+        {
+            <h3>Select an album</h3>
+            @if (Model.AlbumList != null)
+            {
+                if (Model.AlbumList.Count() == 0)
+                {
+                    <p style="color:blue; font-weight:bold;">This search finds no albums on file.</p>
+
+                }
+                else
+                {
+                    <table>
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Album</th>
+                                <th>Year</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.AlbumList)
+                            {
+                                <tr>
+                                    <td width="70px" class="setflex">
+
+                                        <form method="post" >
+                                            <input type="hidden" value="@item.AlbumId"
+                                                   asp-for="AlbumId" />
+                                            <button type="submit" 
+                                                    asp-page-handler="Album">
+                                                <i class="las la-search"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                    <td>@item.Title</td>
+                                    <td>@item.ReleaseYear</td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3">
+                                    @{
+                                        foreach (var pageRef in Model.Pager)
+                                        {
+                                            // I can use the == because of PageRef type being a C# 9 record type
+                                            if (pageRef == Model.Pager.CurrentPage)
+                                            {
+                                                <b>@pageRef.Text</b>
+                                            }
+                                            else
+                                            {
+                                                <a title="Page @pageRef.Page" asp-page="/FilterSearch"
+                                                   asp-route-currentpage="@pageRef.Page">@pageRef.Text</a>
+                                            }
+                                        }
+                                    }
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                }
+            }
+        }
+    </div>
+    <div class="thirty">
+        <h3>Results of your Selections</h3>
+        @if(Model.HasFeedBack)
+        {
+           <p> @Model.FeedBackMessage </p>
+           <ul>
+               <li>MediaType ID: @Model.MediaTypeId</li>
+               <li>Genre ID: @Model.GenreId</li>
+               <li>Album ID: @Model.AlbumId</li>
+           </ul>
+        }
+        <form method="post">
+            <button type="submit" asp-page-handler="Clear">Reset</button>
+        </form>
+    </div>
+</section>

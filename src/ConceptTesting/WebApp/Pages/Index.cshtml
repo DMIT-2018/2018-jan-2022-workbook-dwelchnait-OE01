@@ -1,0 +1,15 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Chinook Examples";
+}
+
+<div>
+    <h1>Welcome</h1>
+
+    <p> The Chinook database version is @Model.info.Major .
+        @Model.info.Minor . @Model.info.Build <br/> Release on
+        @Model.info.ReleaseDate.ToString("MMM dd, yyyy")</p>
+    </p>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>

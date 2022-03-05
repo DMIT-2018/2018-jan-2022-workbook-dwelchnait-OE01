@@ -1,0 +1,14 @@
+﻿:root {
+    --max-body-width: 80rem;
+}
+.setflex {
+    display: flex;
+}
+.twenty{
+    width: 20%;
+    margin-right:10px;
+}
+.thirty {
+    width: 30%;
+    margin-right: 10px;
+}
