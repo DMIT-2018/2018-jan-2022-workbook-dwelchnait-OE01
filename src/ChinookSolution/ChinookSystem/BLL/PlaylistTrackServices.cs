@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using ChinookSystem.DAL;
 using ChinookSystem.Entities;
 using ChinookSystem.ViewModels;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 #endregion
 
 namespace ChinookSystem.BLL
@@ -185,6 +186,91 @@ namespace ChinookSystem.BLL
                 _context.SaveChanges(); //commit to the database
             }
 
+        }
+        public void PlaylistTrack_RemoveTracks(string playlistname, string username, 
+            List<PlaylistTrackMove> trackstoremove)
+        {
+            Track trackExists = null;
+            PlaylistTrack playlisttrackExists = null;
+            Playlist playlistExists = null;
+            int tracknumber = 0;
+            List<Exception> errorlist = new List<Exception>();
+            if (string.IsNullOrWhiteSpace(playlistname))
+            {
+                throw new ArgumentNullException("Playlist name is missing");
+            }
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                throw new ArgumentNullException("Playlist name is missing");
+            }
+            if (trackstoremove.Count == 0)
+            {
+                throw new ArgumentNullException("No track list has been supplied");
+            }
+            playlistExists = _context.Playlists
+                               .Where(x => x.Name.Equals(playlistname, StringComparison.OrdinalIgnoreCase)
+                                       && x.UserName.Equals(username))
+                               .FirstOrDefault();
+            if (playlistExists == null)
+            {
+                errorlist.Add(new Exception("Playlist does not exist. Refresh playlist search"));
+            }
+            else
+            {
+                IEnumerable<PlaylistTrackMove> removelist = trackstoremove
+                                                        .Where(x => x.SelectedTrack);
+                IEnumerable<PlaylistTrackMove> keeplist = trackstoremove
+                                                        .Where(x => !x.SelectedTrack)
+                                                        .OrderBy(x => x.TrackNumber);
+                foreach(var track in removelist)
+                {
+                    playlisttrackExists =  _context.PlaylistTracks
+                                .Where(x => x.Playlist.Name.Equals(playlistname, StringComparison.OrdinalIgnoreCase)
+                                        && x.Playlist.UserName.Equals(username)
+                                        && x.TrackId == track.TrackId)
+                                .FirstOrDefault();
+                    if (playlisttrackExists != null)
+                    {
+                        _context.PlaylistTracks.Remove(playlisttrackExists);
+                    }
+                    //if the track does not exist, then there is actually no problem
+                    //Why? because your were going to remove it anyways
+                }
+
+                tracknumber = 1;
+                foreach(var track in keeplist)
+                {
+                    playlisttrackExists =  _context.PlaylistTracks
+                                .Where(x => x.Playlist.Name.Equals(playlistname, StringComparison.OrdinalIgnoreCase)
+                                        && x.Playlist.UserName.Equals(username)
+                                        && x.TrackId == track.TrackId)
+                                .FirstOrDefault();
+                    if (playlisttrackExists != null)
+                    {
+                        playlisttrackExists.TrackNumber = tracknumber;
+                        EntityEntry<PlaylistTrack> updating = _context.Entry(playlisttrackExists);
+                        updating.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                        tracknumber++;
+                    }
+                    else
+                    {
+                        var songname = _context.Tracks
+                               .Where(x => x.TrackId == track.TrackId)
+                               .Select(x => x.Name)
+                               .SingleOrDefault();
+                        errorlist.Add(new Exception($"Track {songname} does not exist. Refresh playlist search"));
+                    }
+                }
+            }
+            //end of transaction
+            if (errorlist.Count > 0)
+            {
+                throw new AggregateException("Unable to remove tracks. Check concerns.", errorlist);
+            }
+            else
+            {
+                _context.SaveChanges();
+            }
         }
         #endregion
     }
