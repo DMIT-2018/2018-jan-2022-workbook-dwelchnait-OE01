@@ -27,7 +27,7 @@ namespace ChinookSystem.BLL
         #endregion
 
         #region Queries
-        public List<PlaylistTrackInfo> PlaylistTrack_GetUserPlaylistTracks(string playlistname,
+        public List<PlaylistTrackInfo> PlaylistTrack_Fetch_Playlist(string playlistname,
                                                                             string username)
         {
             IEnumerable<PlaylistTrackInfo> info = _context.PlaylistTracks

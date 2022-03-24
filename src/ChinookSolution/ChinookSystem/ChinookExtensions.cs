@@ -45,6 +45,16 @@ namespace ChinookSystem
                 var context = serviceProvider.GetRequiredService<ChinookContext>();
                 return new ArtistServices(context);
             });
+            services.AddTransient<TrackServices>((serviceProvider) =>
+            {
+                var context = serviceProvider.GetRequiredService<ChinookContext>();
+                return new TrackServices(context);
+            });
+            services.AddTransient<PlaylistTrackServices>((serviceProvider) =>
+            {
+                var context = serviceProvider.GetRequiredService<ChinookContext>();
+                return new PlaylistTrackServices(context);
+            });
 
         }
     }
