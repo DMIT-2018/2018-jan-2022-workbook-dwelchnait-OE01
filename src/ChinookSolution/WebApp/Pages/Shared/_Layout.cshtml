@@ -4,7 +4,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"]</title>
+    @* link for holiday css*@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/holiday.css@0.9.8" />
+    @* link for icon8 for icons*@
+    <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
+
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/WebApp.styles.css" asp-append-version="true" />
     @*my css in a RenderSection declaration
@@ -44,6 +48,9 @@
                         <li><a asp-area="" asp-page="/SamplePages/Controls">Controls</a></li>
                         <li><a asp-area="" asp-page="/SamplePages/AlbumsByGenreQuery">Query table with paging</a></li>
                     </ul>
+                </li>
+                <li>
+                    <a asp-area="" asp-page="/SamplePages/PlaylistManagement">Playlist</a>
                 </li>
                 <li>
                     <a asp-area="" asp-page="/Privacy">Privacy</a>
