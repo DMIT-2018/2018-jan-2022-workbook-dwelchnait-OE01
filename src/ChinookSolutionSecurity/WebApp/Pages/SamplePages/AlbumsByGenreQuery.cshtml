@@ -1,0 +1,131 @@
+﻿@page "{GenreId?}"
+@model WebApp.Pages.SamplePages.AlbumsByGenreQueryModel
+@{
+    ViewData["Title"]="Albums by Genre";
+}
+
+@section CustomCSS{
+    <partial name="_MyCustomCSS" />
+}
+
+<h1>Albums by Genre</h1>
+
+<section class="setflex">
+    <div class="onehalf">
+        <blockquote>
+            This page is to demonstrate:<br/>
+            <ul>
+                <li>Use of select tag</li>
+                <li>use of input/datalist tag</li>
+                <li>table creation</li>
+                <li>paging</li>
+                <li>customize layout</li>
+            </ul>
+        </blockquote>
+
+        @if(Model.HasFeedBack)
+        {
+            <p>@Model.FeedBack</p>
+        }
+
+        @if(Model.HasErrorMsg)
+        {
+            <p style="color:firebrick; font-weight:bold">@Model.ErrorMsg</p>
+        }
+
+        <form method="post">
+            <label>
+                Select genre for albums
+                <select asp-for="GenreId">
+                    <option value="0">select genre ...</option>
+                    @foreach(var item in Model.GenreList)
+                    {
+                        if (Model.GenreId == item.ValueId)
+                        {
+                            <option value="@item.ValueId" selected>@item.DisplayText</option>
+                        }
+                        else
+                        {
+                            <option value="@item.ValueId">@item.DisplayText</option>
+                        }
+                    }
+                </select>
+            </label>
+            <br/>
+            @* uses OnPost*@
+            <button type="submit" >Find Albums</button>
+            &nbsp;&nbsp;
+            @* uses OnPostNew*@
+            <button type="submit" asp-page-handler="New">New Album</button>
+        </form>
+    </div>
+    <div class="onehalf">
+        @*do not put out anything unless there is something to show*@
+        @if(Model.AlbumsByGenre != null)
+        {
+            if(Model.AlbumsByGenre.Count() == 0)
+            {
+                <p style="color:blue;font-weight:bold;">This genre has no tracks on any album on file </p>
+            }
+            else
+            {
+                <table border="1">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Year</th>
+                            <th>Label</th>
+                            <th>Artist</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach(var item in Model.AlbumsByGenre)
+                        {
+                            <tr>
+                                @*the Title cell text will act as a link to
+                                        transfer to the CRUD page for Album maintenance
+                                  the href uses the full relative path to the referenced page
+                                  the pkey value is attached to the path name
+                                *@
+                                <td><a href="/SamplePages/CRUDAlbum/@item.AlbumId">
+                                    @item.Title</a>
+                                    </td>
+                                <td>@item.ReleaseYear</td>
+                                <td>@item.ReleaseLabel</td>
+                                <td>@item.ArtistName</td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        @*code to implement paging on our query using the Paginator*@
+                        <tr colspan="4">
+                            <td>
+                                @{
+                                    foreach(var pageRef in Model.Pager)
+                                    {
+                                        if(pageRef == Model.Pager.CurrentPage)
+                                        {
+                                            //bold the current page number
+                                            <b>@pageRef.Text</b>
+                                        }
+                                        else
+                                        {
+                                            //setup the remaining pageing elements as
+                                            //  links to cause the query to refresh
+                                            //  to the selected page
+                                            <a title="Page @pageRef.Page"
+                                               asp-page="/SamplePages/AlbumsByGenreQuery"
+                                               asp-route-currentPage="@pageRef.Page">
+                                               @pageRef.Text</a>
+                                        }
+                                    }
+                                }
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            }
+        }
+    </div>
+
+</section>

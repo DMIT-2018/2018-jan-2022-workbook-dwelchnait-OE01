@@ -1,0 +1,132 @@
+﻿@page
+@model WebApp.Pages.SamplePages.ControlsModel
+@{
+    ViewData["Title"] = "Various Controls";
+}
+
+@* 
+    this code will use the declared RenderSection for a Content Page
+    one can control what goes into the RenderSection
+    referring the section is by the name on the declaration
+
+    in this example, we will supply the RenderSection with the contents
+        of a file.
+    the file will be referred to using the <partial> tag and the name="xxx"
+        attribute
+    this will bring in the contents of the referred file
+*@
+@section CustomCSS{
+    <partial name="_MyCustomCSS" />
+}
+
+<h1>Various Form Controls</h1>
+
+@if(!string.IsNullOrWhiteSpace(Model.Feedback))
+{
+    <p>@Model.Feedback</p><br/>
+}
+
+<section class="setflex">
+    <div class="onethird">
+        <h3>Textboxes</h3>
+        <form method="post">
+            <label>
+                Enter an email
+                <input type="email" asp-for="EmailText"
+                    placeholder="enter email" />
+            </label>
+            <br/>
+            <label>
+                Enter a password
+                <input type="password" asp-for="PasswordText"
+                    placeholder="enter password" />
+            </label>
+            <br/>
+            <label>
+                Enter a date
+                <input type="date" asp-for="DateTimeText" />
+            </label>
+            
+            <br/>
+            <button type="submit" value="textbox" id="theTextButton"
+              name="theTextButton" asp-page-handler="Text">Text Submit</button>
+        </form>
+    </div>
+    <div class="onethird">
+        <h3>RadioButton, CheckBox, TextArea</h3>
+        <form method="post">
+            <label>
+                Select favourite meal <br/>
+            </label>
+            @*<input type="radio" asp-for="RadioMeal" value="breakfast"/>
+                &nbsp; Breakfast<br/>
+            <input type="radio" asp-for="RadioMeal" value="lunch"/>
+                &nbsp; Lunch<br/>
+            <input type="radio" asp-for="RadioMeal" value="dinner/supper"/>
+                &nbsp; Dinner/Supper<br/>
+            <input type="radio" asp-for="RadioMeal" value="snacks"/>
+                &nbsp; Snacks<br/>*@
+            @foreach(var item in Model.Meals)
+            {
+                <input type="radio" asp-for="RadioMeal" value="@item"/> @item<br/>
+            }
+            <br/>
+            <label>
+                <input type="checkbox" asp-for="AcceptanceBox" value="true" />
+                &nbsp; I agree to terms
+            </label>
+            <br/>
+            <label>
+                Message
+                <textarea rows="5" cols="60" placeholder="enter message"
+                    asp-for="MessageText">@Model.MessageText</textarea>
+            </label>
+            <br/>
+            <button type="submit" value="radiocheckarea" id="theRadioCheckAreaButton"
+              name="theRadioCheckAreaButton" asp-page-handler="RadioCheckArea">
+              Radio/Check/Area Submit</button>
+        </form>
+    </div>
+    <div class="onethird">
+        <h3>List and Slider</h3>
+        <form method="post">
+            <label>
+                Select favourite Ride<br/>
+                <select asp-for="MyRide">
+                    @* create a prompt line for the ddl*@
+                    <option value="0">select a ride ...</option>
+                    @* the ddl has a dynamic collection from the database*@
+                    @foreach(var item in Model.Rides)
+                    {
+                        <option value="@item.ValueId">@item.DisplayText</option>
+                    }
+                </select>
+            </label>
+            <br/>
+            <label>
+                Select favourite Vacation spot
+                <input type="text" asp-for="VacationSpot"
+                    list = "VacationChoices" />
+                <datalist id="VacationChoices">
+                    @* the ddl has a dynamic collection from the database*@
+                    @foreach(var item in Model.VacationSpots)
+                    {
+                        <option value="@item" />
+                        @*<option value="@item">@item</option>*@
+                    }
+                </datalist>
+            </label>
+            <br/>
+            <label>
+                Review of controls (bad < - > good)
+                <input type="range" min="0" max="10" steps="1" value="5"
+                    asp-for="ReviewRating" checked="@Model.ReviewRating" />
+            </label>
+            <br/>
+            <button type="submit" value="listrangebox" id="theListSliderButton"
+              name="theListSliderButton" asp-page-handler="ListSlider">
+              List/Slider Submit</button>
+        </form>
+    </div>
+
+</section>

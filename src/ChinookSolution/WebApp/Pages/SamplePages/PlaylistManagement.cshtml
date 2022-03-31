@@ -178,7 +178,58 @@
                         </thead>
 
                         <tbody>
-                           @* code to demo CQRS for a table display*@
+                           @* code to demo CQRS for a table display
+                               a) the display of the table info is via the query
+                                    collection mapped by List<PlaylistTrackInfo> qplaylistInfo
+                                        
+                               b) the collection variable for the incoming data (command)
+                                    will be placed in the List<PlaylistTrackMove> cplaylistInfo
+                                  the variable is a BindProperty which means that the
+                                    data will be move on my behalf to the collection
+                                  any property reference to the cplaylistInfo will be properties
+                                    of PlaylistTrackMove
+
+                               To ensure that the row data is collected correctly into the
+                                  appropriate row instance, reference to the collection instance
+                                  property will be by a "unique index value".
+                               this "unique index value" does NOT need to be an integer. It 
+                                  simply has to be unique to the collection. It will be used 
+                                  "LIKE" and "INDEX" in a collection
+                           *@
+                           @foreach(var item in Model.qplaylistInfo)
+                            {
+                                <tr>
+                                    <td>
+                                        @* specific an input control that is "flagged" as the
+                                            index.
+                                           assign a value to this control
+                                        *@
+                                        <input type="hidden" name="cplaylistInfo.Index"
+                                                value="@item.TrackId">
+                                        @* on all mapped input to the collection instance
+                                             definition will use this "index" in its name
+                                           the name/value pair is replacing the asp-for
+
+                                           use either name/value pair OR asp-for NOT both
+                                        *@
+                                        <input type="hidden"
+                                            name="cplaylistInfo[@item.TrackId].TrackId"
+                                            value="@item.TrackId">
+                                        <input type="checkbox"
+                                            name="cplaylistInfo[@item.TrackId].SelectedTrack"
+                                            value="true">
+                                    </td>
+                                    <td> 
+                                        <input type="hidden"
+                                            name="cplaylistInfo[@item.TrackId].TrackNumber"
+                                            value="@item.TrackNumber">
+                                        @item.TrackNumber</td>
+                                    <td>@item.SongName</td>
+                                    <td>@TimeSpan.FromMilliseconds(item.Milliseconds).ToString(@"mm\:ss")</td>
+                                    <td><input type="text" class="smallbox"
+                                             name="cplaylistInfo[@item.TrackId].TrackInput"></td>
+                                </tr>
+                            }
                         </tbody>
                     </table>
                 }
