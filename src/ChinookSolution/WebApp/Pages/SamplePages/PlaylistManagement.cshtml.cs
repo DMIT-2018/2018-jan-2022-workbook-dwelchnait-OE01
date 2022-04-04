@@ -65,9 +65,15 @@ namespace WebApp.Pages.SamplePages
         //CQRS query data model
         public List<PlaylistTrackInfo> qplaylistInfo { get; set; }
 
-        //CQRS command data model
+        /// <summary>
+        /// command model collection
+        /// data will be moved automatically from the form into this collection
+        /// 
+        /// create a command data instance, will be needed to do logic of retaining
+        ///     errors on table (see form for retain code)
+        /// </summary>
         [BindProperty]
-        public List<PlaylistTrackMove> cplaylistInfo { get; set; }
+        public List<PlaylistTrackMove> cplaylistInfo { get; set; } = new();
 
         [BindProperty]
         public int addtrackid { get; set; }
@@ -222,6 +228,47 @@ namespace WebApp.Pages.SamplePages
                 _playlisttrackServices.PlaylistTrack_RemoveTracks(playlistname.Trim(),
                     USERNAME, cplaylistInfo);
                 FeedBackMessage="Tracks have been removed from your playlist";
+
+                return RedirectToPage(new
+                {
+                    searchBy = string.IsNullOrWhiteSpace(searchBy) ? " " : searchBy.Trim(),
+                    searchArg = string.IsNullOrWhiteSpace(searchArg) ? " " : searchArg.Trim(),
+                    playlistname = playlistname
+                });
+            }
+            catch (AggregateException ex)
+            {
+
+                ErrorMessage = "Unable to process remove tracks";
+                foreach (var error in ex.InnerExceptions)
+                {
+                    ErrorDetails.Add(error.Message);
+
+                }
+                GetTrackInfo();
+                GetPlaylist();
+
+                return Page();
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = GetInnerException(ex).Message;
+                GetTrackInfo();
+                GetPlaylist();
+
+                return Page();
+            }
+
+        }
+        public IActionResult OnPostReOrg()
+        {
+            try
+            {
+                //Add the code to process the list of tracks via the service.
+                string username = USERNAME;
+                _playlisttrackServices.PlaylistTrack_MoveTracks(playlistname.Trim(),
+                    USERNAME, cplaylistInfo);
+                FeedBackMessage = "Tracks have been reorganized";
 
                 return RedirectToPage(new
                 {

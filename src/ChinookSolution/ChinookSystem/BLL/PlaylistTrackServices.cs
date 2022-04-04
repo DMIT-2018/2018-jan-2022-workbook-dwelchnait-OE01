@@ -339,7 +339,7 @@ namespace ChinookSystem.BLL
                            .Where(x => x.TrackId == trackstomove[i + 1].TrackId)
                            .Select(x => x.Name)
                            .SingleOrDefault();
-                    if (trackstomove[i] == trackstomove[i+1])
+                    if (trackstomove[i].TrackInput == trackstomove[i+1].TrackInput)
                     {
                         errorlist.Add(new Exception($"{songname1}'s re-organize value in the same as {songname2}. Re-organization values must be different. "));
                     }

@@ -198,6 +198,21 @@
                            *@
                            @foreach(var item in Model.qplaylistInfo)
                             {
+                                //retain entered values non-query data model fields (command)
+                                //  to assist with error messages.
+                                //setup local variables to hold the command data values
+                                //see command data model instance setup, it has a = new() to
+                                //   ensure a command data model instance exists even if empty
+                                
+                                 bool selectedtrack = false;
+                                 string? trackinput = null;
+                                 var song = Model.cplaylistInfo.SingleOrDefault(x => x.TrackId == item.TrackId);
+                                if (song != null)
+                                {
+                                    selectedtrack = song.SelectedTrack;
+                                    trackinput = song.TrackInput;
+                                }
+
                                 <tr>
                                     <td>
                                         @* specific an input control that is "flagged" as the
@@ -215,7 +230,10 @@
                                         <input type="hidden"
                                             name="cplaylistInfo[@item.TrackId].TrackId"
                                             value="@item.TrackId">
-                                        <input type="checkbox"
+                                        @* note to retain data the checked had to be add using
+                                            the local variable above
+                                        *@
+                                        <input type="checkbox" checked="@selectedtrack"
                                             name="cplaylistInfo[@item.TrackId].SelectedTrack"
                                             value="true">
                                     </td>
@@ -226,7 +244,10 @@
                                         @item.TrackNumber</td>
                                     <td>@item.SongName</td>
                                     <td>@TimeSpan.FromMilliseconds(item.Milliseconds).ToString(@"mm\:ss")</td>
-                                    <td><input type="text" class="smallbox"
+                                     @* note to retain data the value had to be add using
+                                            the local variable above
+                                        *@
+                                    <td><input type="text" class="smallbox" value="@trackinput"
                                              name="cplaylistInfo[@item.TrackId].TrackInput"></td>
                                 </tr>
                             }
