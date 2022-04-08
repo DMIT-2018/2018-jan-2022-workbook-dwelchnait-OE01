@@ -331,17 +331,21 @@ namespace ChinookSystem.BLL
                 // b) unique re-sequence track number
                 for(int i = 0; i < trackstomove.Count - 1; i++)
                 {
-                    var songname1 = _context.Tracks
-                           .Where(x => x.TrackId == trackstomove[i].TrackId)
-                           .Select(x => x.Name)
-                           .SingleOrDefault();
-                    var songname2 = _context.Tracks
-                           .Where(x => x.TrackId == trackstomove[i + 1].TrackId)
-                           .Select(x => x.Name)
-                           .SingleOrDefault();
-                    if (trackstomove[i].TrackInput == trackstomove[i+1].TrackInput)
+                    if (!string.IsNullOrWhiteSpace(trackstomove[i].TrackInput) &&
+                        !string.IsNullOrWhiteSpace(trackstomove[i + 1].TrackInput))
                     {
-                        errorlist.Add(new Exception($"{songname1}'s re-organize value in the same as {songname2}. Re-organization values must be different. "));
+                        var songname1 = _context.Tracks
+                               .Where(x => x.TrackId == trackstomove[i].TrackId)
+                               .Select(x => x.Name)
+                               .SingleOrDefault();
+                        var songname2 = _context.Tracks
+                               .Where(x => x.TrackId == trackstomove[i + 1].TrackId)
+                               .Select(x => x.Name)
+                               .SingleOrDefault();
+                        if (trackstomove[i].TrackInput == trackstomove[i+1].TrackInput)
+                        {
+                            errorlist.Add(new Exception($"{songname1}'s re-organize value in the same as {songname2}. Re-organization values must be different. "));
+                        }
                     }
                 }
                 //re=sequence the playlist
