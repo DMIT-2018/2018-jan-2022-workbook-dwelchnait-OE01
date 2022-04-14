@@ -59,6 +59,7 @@ namespace WebApp.Pages.SamplePages
         public int? currentpage { get; set; }
         #endregion
 
+        #region Web page properties (variables)
         [BindProperty(SupportsGet = true)]
         public string searchBy { get; set; }
 
@@ -79,21 +80,36 @@ namespace WebApp.Pages.SamplePages
 
         [BindProperty]
         public int addtrackid { get; set; }
+        #endregion
 
         #region Security
         public ApplicationUser AppUser { get; set; }
         public string EmployeeName { get; set; }
+
+        //optionally you can include this property in your routing parameters
+        [BindProperty(SupportsGet =true)]
+        public int? employeeid { get; set; }
+
         public const string USERNAME = "HansenB"; //pretend user until security implemented
         #endregion
 
         public async Task OnGet()
         {
+            //RedirectToPage always request the OnGet to execute
             AppUser = await _UserManager.FindByNameAsync(User.Identity.Name);
+            employeeid = AppUser.EmployeeId;
             EmployeeName = _Security.GetEmployeeName(AppUser.EmployeeId.Value);
             GetTrackInfo();
             GetPlaylist();
         }
 
+        public async Task GetActiveEmployee()
+        {
+            //this method will be call from ANY Post 
+            AppUser = await _UserManager.FindByNameAsync(User.Identity.Name);
+            employeeid = AppUser.EmployeeId;
+            EmployeeName = _Security.GetEmployeeName(AppUser.EmployeeId.Value);
+        }
         public void GetTrackInfo()
         {
             if (!string.IsNullOrWhiteSpace(searchArg) &&
@@ -181,6 +197,10 @@ namespace WebApp.Pages.SamplePages
 
         public IActionResult OnPostAddTrack()
         {
+            //within this post, I need my employee information: employeeid
+            _ = GetActiveEmployee();
+            Thread.Sleep(1000);
+
             try
             {
                 if (string.IsNullOrWhiteSpace(playlistname))
@@ -198,6 +218,10 @@ namespace WebApp.Pages.SamplePages
 
                 return RedirectToPage(new
                 {
+                    //if you wish to include your employeeid as a routing parameter
+                    //  i suggest you make it your first parameter
+                    //  @page"{employeeid/}/....."
+                    // employeeid = employeeid,
                     searchby = searchBy,
                     searcharg = searchArg,
                     playlistname = playlistname
